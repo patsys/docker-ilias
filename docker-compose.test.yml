@@ -1,0 +1,43 @@
+version: '2'
+services:
+  ilias:
+    build: .
+    image: patsys/ilias
+    environment:
+      - ILIAS_HTDOCS=/app/www/localhost/htdocs
+      - ILIAS_HTTP_PATH=http://ilias
+      - ILIAS_SETUP_PASSWORD=T3stT3st
+      - ILIAS_ADMIN_FIRSTNAME=Test
+      - ILIAS_ADMIN_LASTNAME=Test
+      - ILIAS_ADMIN_EMAIL=test@noemail.com
+      - ILIAS_CLIENT_NAME=test
+      - ILIAS_DB_TYPE=mysql
+      - ILIAS_DB_HOST=db
+      - ILIAS_DB_PASSWORD=T3stT3st
+      - ILIAS_DB_USER=ilias
+      - ILIAS_DB_NAME=ilias
+      - ILIAS_CREATE_CONFIG=""
+    links:
+      - db
+    expose:
+      - "80"
+  db:
+    image: patsys/mariadb
+    environment:
+      - MYSQL_DATABASE=ilias
+      - MYSQL_USER=ilias
+      - MYSQL_PASSWORD=T3stT3st
+      - MYSQL_ROOT_PASSWORD=T3stT3st
+      - MYSQL_HOST=172.%.%.%
+      - MYSQL_ROOT_HOST=172.%.%.%
+    expose:
+      - "3306"
+  sut:
+    image: patsys/test-webserver
+    links:
+      - ilias
+    environment:
+      - HOST=http://ilias
+      - WORD=Login
+      - INTERVAL=10
+      - TRY=70
